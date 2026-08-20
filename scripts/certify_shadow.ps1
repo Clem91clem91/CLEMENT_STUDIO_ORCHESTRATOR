@@ -14,7 +14,11 @@ if (-not (Test-Path -LiteralPath $Python)) {
 
 Push-Location $Repo
 try {
-    if (@(& git status --porcelain).Count -gt 0) {
+    $Status = @(& git status --porcelain)
+    if ($Status.Count -gt 0) {
+        Write-Host "WORKTREE_DIRTY_BEGIN"
+        foreach ($Line in $Status) { Write-Host $Line }
+        Write-Host "WORKTREE_DIRTY_END"
         throw "WORKTREE_NOT_CLEAN"
     }
 
@@ -32,6 +36,15 @@ try {
     & $Python scripts\certify_shadow.py
     if ($LASTEXITCODE -ne 0) { throw "ORCHESTRATOR_SMOKE_FAILED" }
     Write-Host "ORCHESTRATOR_SMOKE=PASS"
+
+    $AfterStatus = @(& git status --porcelain)
+    if ($AfterStatus.Count -eq 0) {
+        Write-Host "WORKTREE_AFTER=CLEAN"
+    }
+    else {
+        Write-Host "WORKTREE_AFTER=DIRTY"
+        foreach ($Line in $AfterStatus) { Write-Host $Line }
+    }
 
     Write-Host "MERGE_EXECUTED=NO"
     Write-Host "TAG_CREATED=NO"
