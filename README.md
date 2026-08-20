@@ -1,37 +1,39 @@
 # CLEMENT_STUDIO_ORCHESTRATOR
 
-P0-04 - orchestrateur dynamique pour CLEMENT STUDIO.
+P0-04 - dynamic orchestrator for CLEMENT STUDIO.
 
-## Pipeline cible
+## Pipeline
 
-`intents -> skills -> agents -> models -> MCP -> mentalities -> coalitions -> arena -> execution -> verification -> retry`
+`intent -> Skills MCP -> dependency/conflict bundle -> mentalities -> agents -> model -> MCP tools -> coalition -> arena A/B/C/D -> verification -> evidence-gated retry`
 
-## Principes
+## Current implementation
 
-- aucune limite fixe du nombre d'agents ;
-- coalition construite selon la couverture des skills et mentalites requises ;
-- prise en compte de VRAM, latence, cout, qualite, risque, fiabilite et historique ;
-- mentalites supportees : analytical, creative, skeptical, engineering, security, verification, minimalist, research, planning ;
-- arena comparative de strategies A/B/C/D ;
-- classement deterministe ;
-- verifier final : `PASS`, `PARTIAL`, `FAIL`, `INCONCLUSIVE` ;
-- retry ulterieur pilote par les preuves et non par une boucle aveugle.
+- no fixed agent-count ceiling;
+- dynamic coalition based on skill and mentality coverage;
+- objective-driven mentality inference when the caller does not pin a profile;
+- mentalities: analytical, creative, skeptical, engineering, security, verification, minimalist, research, planning;
+- quality, reliability, latency, cost, VRAM, risk and historical scoring;
+- deterministic A/B/C/D arena;
+- verifier verdicts: `PASS`, `PARTIAL`, `FAIL`, `INCONCLUSIVE`;
+- retry only for PARTIAL/INCONCLUSIVE and only when new evidence exists;
+- `TASK-YYYYMMDD-####` observability IDs;
+- P0-02 adapter for the real `skills_search` payload shape, including dependencies, conflicts and context cost;
+- Windows PowerShell 5.1 Shadow certification wrapper.
 
-## Prototype v0.1.0
+## Main modules
 
-Le premier noyau fournit :
+- `core.py` - coalition, arena and verifier primitives;
+- `reasoning.py` - automatic mentality inference;
+- `pipeline.py` - skill/model/tool selection, arena and retry policy;
+- `adaptive.py` - automatic reasoning-profile entrypoint;
+- `skills_mcp.py` - adapter from CLEMENT Skills MCP to orchestration inputs.
 
-- `build_coalition()` : selection dynamique sans plafond d'agents ;
-- `rank_arena()` : classement de strategies par utilite composite ;
-- `verify_result()` : verdict de verification explicite ;
-- structures `TaskContext`, `AgentProfile`, `Coalition`, `ArenaCandidate`.
-
-## Developpement
+## Shadow
 
 ```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\.venv\Scripts\python.exe -m pytest
+cd "C:\Users\Shadow\Documents\CLEMENT_STUDIO\04_TOOLS\CLEMENT_STUDIO_ORCHESTRATOR"
+git pull --ff-only origin feat/p0-dynamic-orchestrator
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\scripts\certify_shadow.ps1"
 ```
 
-Aucun merge, tag ou release n'est implique par cette branche feature.
+No merge, tag or release is performed by the certification scripts.
