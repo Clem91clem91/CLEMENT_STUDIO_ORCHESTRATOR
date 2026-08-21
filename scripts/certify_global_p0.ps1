@@ -51,7 +51,7 @@ try {
     }
     Write-Host "PYTEST=PASS"
 
-    & $Python scripts\certify_global_p0_v2.py
+    & $Python scripts\certify_global_p0_v3.py
     if ($LASTEXITCODE -ne 0) {
         throw "GLOBAL_P0_CERTIFICATION_FAILED"
     }
