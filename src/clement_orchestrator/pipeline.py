@@ -209,7 +209,15 @@ def build_plan(
     task_id: str | None = None,
 ) -> OrchestrationPlan:
     selected_skills, skill_reasons = resolve_skill_bundle(skill_matches, max_context_cost=max_context_cost)
-    required_skills = frozenset(item.skill_id for item in selected_skills) or task.required_skills
+
+    # Registry skill IDs (for example ``clement.agent-orchestration.<sha>``)
+    # are evidence/resources selected for the mission. Agent profiles, however,
+    # advertise semantic capabilities such as ``planning`` or ``verification``.
+    # Preserve an explicitly supplied semantic task contract instead of
+    # replacing it with registry identifiers. The registry IDs are used only as
+    # a fallback for legacy callers that did not provide semantic requirements.
+    required_skills = task.required_skills or frozenset(item.skill_id for item in selected_skills)
+
     effective_task = TaskContext(
         objective=task.objective,
         required_skills=required_skills,
