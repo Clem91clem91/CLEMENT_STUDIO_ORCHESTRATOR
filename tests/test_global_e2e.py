@@ -36,6 +36,8 @@ def test_route_evidence_separates_technical_and_provider_usage():
             "usage": {"prompt_tokens": 91, "completion_tokens": 10, "total_tokens": 186},
         },
     )
+    assert evidence.route_complete is True
+    assert evidence.execution_complete is True
     assert evidence.complete is True
     assert evidence.final_provider == "antigravity"
     assert evidence.final_model == "gemini-3.6-flash-high"
@@ -43,6 +45,31 @@ def test_route_evidence_separates_technical_and_provider_usage():
     assert evidence.provider_billable_tokens == 101
     assert evidence.reported_cost_eur == 0.0
     assert evidence.marker_observed is True
+
+
+def test_route_can_pass_when_execution_marker_is_missing():
+    evidence = extract_route_evidence(
+        strategy="A",
+        requested_alias="auto/best-coding",
+        http_status=200,
+        headers={
+            "x-omniroute-provider": "antigravity",
+            "x-omniroute-model": "gemini-3.6-flash-high",
+            "x-omniroute-cache": "MISS",
+            "x-omniroute-tokens-in": "501",
+            "x-omniroute-tokens-out": "10",
+            "x-omniroute-response-cost": "0",
+        },
+        payload={
+            "model": "gemini-3.6-flash-high",
+            "choices": [{"message": {"content": ""}}],
+            "usage": {"total_tokens": 689},
+        },
+    )
+    assert evidence.route_complete is True
+    assert evidence.marker_observed is False
+    assert evidence.execution_complete is False
+    assert evidence.complete is False
 
 
 def test_route_evidence_is_incomplete_without_provider_headers():
@@ -58,6 +85,8 @@ def test_route_evidence_is_incomplete_without_provider_headers():
             "usage": {"total_tokens": 20},
         },
     )
+    assert evidence.route_complete is False
+    assert evidence.execution_complete is False
     assert evidence.complete is False
     assert evidence.final_provider is None
     assert evidence.provider_billable_tokens is None
