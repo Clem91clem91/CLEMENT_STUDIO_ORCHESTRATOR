@@ -25,19 +25,25 @@ jobs:
         run: python -m compileall -q src tests scripts
       - name: Test
         run: python -m pytest
-      - name: Parse Shadow wrapper with Windows PowerShell
+      - name: Parse Shadow wrappers with Windows PowerShell
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          $tokens = $null
-          $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path "scripts\certify_shadow.ps1"),
-            [ref]$tokens,
-            [ref]$errors
-          ) | Out-Null
-          if ($errors.Count -gt 0) {
-            $errors | Format-List
-            exit 1
+          foreach ($Path in @(
+            "scripts\certify_shadow.ps1",
+            "scripts\certify_global_p0.ps1"
+          )) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $Path),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              Write-Host "POWERSHELL_PARSE_FAILED=$Path"
+              $errors | Format-List
+              exit 1
+            }
+            Write-Host "POWERSHELL_PARSE=PASS PATH=$Path"
           }
-          Write-Host "POWERSHELL_PARSE=PASS"
