@@ -40,13 +40,16 @@ jobs:
         run: python -m compileall -q src tests scripts
       - name: Test
         run: python -m pytest
+      - name: P1 reference E2E
+        run: python scripts/certify_p1_reference.py
       - name: Parse Shadow wrappers with Windows PowerShell
         if: runner.os == 'Windows'
         shell: powershell
         run: |
           foreach ($Path in @(
             "scripts\certify_shadow.ps1",
-            "scripts\certify_global_p0.ps1"
+            "scripts\certify_global_p0.ps1",
+            "scripts\certify_p1_shadow.ps1"
           )) {
             $tokens = $null
             $errors = $null
