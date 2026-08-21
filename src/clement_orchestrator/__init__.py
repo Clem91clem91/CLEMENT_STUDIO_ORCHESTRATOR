@@ -29,6 +29,16 @@ from .resource_guard import (
     SecurityGuard,
 )
 from .observability import TaskObserver, TaskTrace, TokenUsage
+from .evidence_contract import (
+    Claim,
+    ConsistencyFinding,
+    EvidenceSource,
+    EvidenceStore,
+    EvidenceVerdict,
+    RawEvidence,
+    VerificationReport,
+    json_path_get,
+)
 
 __all__ = [
     "AgentProfile", "ArenaCandidate", "Coalition", "Mentality", "TaskContext",
@@ -37,7 +47,9 @@ __all__ = [
     "ExecutionStatus", "PermissionDecision", "RiskLevel", "ToolDescriptor",
     "AgentRuntime", "AgentSpec", "AgentState", "ResourceAction", "ResourceManager",
     "ResourceMode", "ResourceSnapshot", "ActionDecision", "ActionRisk", "SecurityGuard",
-    "TaskObserver", "TaskTrace", "TokenUsage",
+    "TaskObserver", "TaskTrace", "TokenUsage", "EvidenceVerdict", "EvidenceSource",
+    "RawEvidence", "Claim", "ConsistencyFinding", "VerificationReport", "EvidenceStore",
+    "json_path_get",
 ]
 
 __version__ = "0.1.0"
