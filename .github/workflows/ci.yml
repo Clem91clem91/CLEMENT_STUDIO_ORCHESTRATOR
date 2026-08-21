@@ -1,10 +1,25 @@
 name: orchestrator-ci
 
 on:
+  workflow_dispatch:
   pull_request:
-    branches: [develop]
+    branches:
+      - main
+      - develop
   push:
-    branches: [feat/p0-dynamic-orchestrator]
+    branches:
+      - main
+      - develop
+      - "feat/**"
+      - "fix/**"
+      - "chore/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orchestrator-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -47,3 +62,14 @@ jobs:
             }
             Write-Host "POWERSHELL_PARSE=PASS PATH=$Path"
           }
+
+  governance-gate:
+    name: governance-gate
+    if: ${{ always() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce CI matrix success
+        shell: bash
+        run: |
+          test "${{ needs.test.result }}" = "success"
