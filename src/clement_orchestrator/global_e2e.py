@@ -44,15 +44,34 @@ class RouteEvidence:
         return asdict(self)
 
     @property
-    def complete(self) -> bool:
+    def route_complete(self) -> bool:
+        """True when P0-03 routing/accounting evidence is structurally complete.
+
+        The application-level strategy marker deliberately does not participate
+        in this gate. A provider may return an empty or malformed assistant
+        message while OmniRoute still routed the request correctly and exposed
+        provider/model/usage evidence. That is a P0-04 execution concern.
+        """
+
         return (
             self.http_status == 200
-            and self.marker_observed
             and bool(self.final_provider)
             and bool(self.final_model)
             and self.provider_billable_tokens is not None
             and self.technical_tokens is not None
         )
+
+    @property
+    def execution_complete(self) -> bool:
+        """True when routing evidence is complete and the P0-04 marker arrived."""
+
+        return self.route_complete and self.marker_observed
+
+    @property
+    def complete(self) -> bool:
+        """Backward-compatible alias for the original strict execution gate."""
+
+        return self.execution_complete
 
 
 def strategy_marker(strategy: str) -> str:
