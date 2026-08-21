@@ -7,7 +7,7 @@ name = "clement-studio-orchestrator"
 version = "0.1.0"
 description = "Dynamic arena and coalition orchestrator for CLEMENT STUDIO"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["mcp>=2,<3"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
