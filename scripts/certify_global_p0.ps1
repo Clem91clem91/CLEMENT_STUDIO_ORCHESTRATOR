@@ -7,7 +7,7 @@ $ExpectedBranch = "feat/p0-dynamic-orchestrator"
 
 Write-Host "============================================================"
 Write-Host "CLEMENT STUDIO - GLOBAL P0 CERTIFICATION"
-Write-Host "MODE=REAL_E2E_FAIL_CLOSED"
+Write-Host "MODE=REAL_E2E_FAIL_CLOSED_SEPARATED_GATES"
 Write-Host "============================================================"
 
 if (-not (Test-Path -LiteralPath $Python)) {
@@ -51,7 +51,7 @@ try {
     }
     Write-Host "PYTEST=PASS"
 
-    & $Python scripts\certify_global_p0.py
+    & $Python scripts\certify_global_p0_v2.py
     if ($LASTEXITCODE -ne 0) {
         throw "GLOBAL_P0_CERTIFICATION_FAILED"
     }
